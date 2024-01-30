@@ -47,7 +47,8 @@ void NpVehicleSetup::buildVehicle(const hknpWorld* world, hknpVehicleInstance& v
     vehicle.m_suspension = new hknpVehicleDefaultSuspension;
     vehicle.m_aerodynamics = new hknpVehicleDefaultAerodynamics;
     vehicle.m_velocityDamper = new hknpVehicleDefaultVelocityDamper;
-    if (useRaycast)
+
+    if (SetupData.RayTraceOrCollision)
     {
         vehicle.m_wheelCollide = new hknpVehicleRayCastWheelCollide;
     }
@@ -70,7 +71,7 @@ void NpVehicleSetup::buildVehicle(const hknpWorld* world, hknpVehicleInstance& v
     setupComponent(*vehicle.m_data, world->getGravity(), *static_cast<hknpVehicleDefaultAerodynamics*>(vehicle.m_aerodynamics));
     setupComponent(*vehicle.m_data, *static_cast<hknpVehicleDefaultVelocityDamper*>(vehicle.m_velocityDamper));
 
-    if (useRaycast)
+    if (SetupData.RayTraceOrCollision)
     {
         setupWheelCollide(world, vehicle, *static_cast<hknpVehicleRayCastWheelCollide*>(vehicle.m_wheelCollide));
     }
@@ -105,14 +106,18 @@ void NpVehicleSetup::buildVehicle(const hknpWorld* world, hknpVehicleInstance& v
     // Accelerate.
     vehicle.m_deviceStatus = new hknpVehicleDriverInputAnalogStatus;
     hknpVehicleDriverInputAnalogStatus* deviceStatus = (hknpVehicleDriverInputAnalogStatus*)vehicle.m_deviceStatus;
-    deviceStatus->m_positionY = -0.4f;
+    //deviceStatus->m_positionY = -0.4f;
 
     // Turn.
-    deviceStatus->m_positionX = 0.3f;
+   // deviceStatus->m_positionX = 0.3f;
+
+
 
     // Defaults
     deviceStatus->m_handbrakeButtonPressed = false;
     deviceStatus->m_reverseButtonPressed = false;
+
+
 
     //
     // Don't forget to call init! (This function is necessary to set up derived data)

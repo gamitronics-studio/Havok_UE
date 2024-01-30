@@ -93,6 +93,12 @@ struct FCarSetup
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float L = 1.1f;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    bool bUseCustomCar;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    bool bUseRayTrace;
+
 };
 
 UCLASS(BlueprintType)
@@ -124,10 +130,13 @@ public:
     void UpdateWheels(FVector& T1L, FQuat& T1Q, FVector& T2L, FQuat& T2Q, FVector& T3L, FQuat& T3Q, FVector& T4L, FQuat& T4Q);
 
     UFUNCTION(BlueprintCallable)
-    void GetCarStats(float& RPM, float& KMPH);
+    void GetCarStats(float& RPM, float& KMPH, int& Gear, bool &isReverse, float &Torque, float &SteerAngle);
 
     UFUNCTION(BlueprintCallable)
     void ResetCar();
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    bool bUseCustomCar;
 
 private:
     class HK_Car* Car;

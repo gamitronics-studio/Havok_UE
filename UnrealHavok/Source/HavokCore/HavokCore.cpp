@@ -23,5 +23,5 @@ void FHavokCoreModule::ShutdownModule()
 	FPlatformProcess::FreeDllHandle(DynamicLibExampleHandle);
 	DynamicLibExampleHandle = nullptr;
 
-	UE_LOG(LogTemp, Fatal, TEXT("HavokCore.dll unloaded"));
+	//UE_LOG(LogTemp, Fatal, TEXT("HavokCore.dll unloaded"));
 }

@@ -55,7 +55,11 @@ int AHK_Vehicle::SpawnCar(FCarSetup SetupData, const TArray<float>& X, const TAr
 
 	hkSetup.Up = SetupData.U; hkSetup.Front = SetupData.F; hkSetup.Back = SetupData.B; hkSetup.Lateral = SetupData.L;
 
-	Car->HK_BuildCarMesh(X.GetData(), Z.GetData(), Y.GetData(), X.Num(), Triangles.GetData(), Triangles.Num());
+	hkSetup.RayTraceOrCollision = SetupData.bUseRayTrace;
+
+	//Car->HK_BuildCarMesh(X.GetData(), Z.GetData(), Y.GetData(), X.Num(), Triangles.GetData(), Triangles.Num());
+
+	Car->bCustomCar = SetupData.bUseCustomCar;
 
 	return Car->HK_BuildCar(hkSetup, X.GetData(), Z.GetData(), Y.GetData(), X.Num(), Triangles.GetData(), Triangles.Num());
 }
@@ -102,11 +106,15 @@ void AHK_Vehicle::UpdateWheels(FVector& T1L, FQuat& T1Q, FVector& T2L, FQuat& T2
 	T4L = hkLocationToFVector(T4_L);
 }
 
-void AHK_Vehicle::GetCarStats(float& RPM, float& KMPH)
+void AHK_Vehicle::GetCarStats(float& RPM, float& KMPH, int& Gear, bool& isReverse, float& Torque, float& SteerAngle)
 {
 	HK_CarStats Stats = Car->HK_GetCarStats();
 	RPM = Stats.RPM;
 	KMPH = Stats.KMPH;
+	Gear = Stats.Gear;
+	isReverse = Stats.isReverse;
+	Torque = Stats.Torque;
+	SteerAngle = Stats.SteerAngle;
 }
 
 void AHK_Vehicle::ResetCar()

@@ -83,9 +83,7 @@ int HK_Car::HK_BuildCar(HK_CarSetup SetupData, const float X[], const float Y[],
             hkVector4 halfExtents(1, 1, 1);
             hkRefPtr<hknpShape> boxShape = hknpShape::makeBoxFromHalfExtents(halfExtents);
 
-            //BodyShape = hknpShape::makeMesh(geometry);
-
-            chassisBodyInfo.m_shape = hknpShape::makeMesh(geometry); //BodyShape; //makeCarChassisShape(); //BodyShape;
+            chassisBodyInfo.m_shape = bCustomCar ? hknpShape::makeMesh(geometry): makeCarChassisShape();
             chassisBodyInfo.m_materialId = chassisMaterialId;
             chassisBodyInfo.m_mass = SetupData.HK_Mass;
             chassisBodyInfo.m_motionType = hknpMotionType::DYNAMIC;
@@ -106,7 +104,7 @@ int HK_Car::HK_BuildCar(HK_CarSetup SetupData, const float X[], const float Y[],
         hkRotation rot;
         rot.setCols(hkVector4(0, 1, 0), hkVector4(1, 0, 0), hkVector4(0, 0, 1));
 
-        const bool useRayCast = false;
+        const bool useRayCast = true;
         setup.buildVehicle(m_npWorld, *m_vehicle, rot, useRayCast);
 
         m_npWorld->getActionManager()->addAction(m_vehicle);
@@ -184,8 +182,8 @@ HK_Quaternion HK_Car::HK_GetCarRotation()
 
 void HK_Car::HK_UpdateWheels(HK_Location& T1_L, HK_Quaternion& T1_Q, HK_Location& T2_L, HK_Quaternion& T2_Q, HK_Location& T3_L, HK_Quaternion& T3_Q, HK_Location& T4_L, HK_Quaternion& T4_Q)
 {
-    hkVector4 T1L, T2L, T3L, T4L;
-    hkQuaternion T1Q, T2Q, T3Q, T4Q;
+   hkVector4 T1L, T2L, T3L, T4L;
+   hkQuaternion T1Q, T2Q, T3Q, T4Q;
 
    m_vehicle->calcCurrentPositionAndRotation(m_vehicle->getChassisTransform(), m_vehicle->m_suspension, 0, T1L, T1Q);
    m_vehicle->calcCurrentPositionAndRotation(m_vehicle->getChassisTransform(), m_vehicle->m_suspension, 1, T2L, T2Q);
@@ -209,6 +207,10 @@ HK_CarStats HK_Car::HK_GetCarStats()
     HK_CarStats stats;
     stats.RPM = m_vehicle->calcRPM();
     stats.KMPH = m_vehicle->calcKMPH();
+    stats.Gear = m_vehicle->m_currentGear;
+    stats.isReverse = m_vehicle->m_isReversing;
+    stats.Torque = m_vehicle->m_torque;
+    //stats.SteerAngle = m_vehicle->m_wheelsSteeringAngle;
 
     return stats;
 }

@@ -41,12 +41,19 @@ struct HK_CarSetup
 	float HK_SuspensionStrength = 50.0f;
 
 	float Up = -0.05f, Front = 1.3f, Back = 1.1f, Lateral = 1.1f;
+
+	bool RayTraceOrCollision;
 };
 
 struct HK_CarStats
 {
 	float KMPH;
 	float RPM;
+	int Gear;
+	bool isReverse;
+	float Torque;
+	float SteerAngle;
+
 };
 
 #ifdef __cplusplus 
@@ -82,4 +89,6 @@ public:
 	void HK_Step(float, float, bool, bool, float);
 
 	void HK_ResetCar();
+
+	bool bCustomCar;
 };
