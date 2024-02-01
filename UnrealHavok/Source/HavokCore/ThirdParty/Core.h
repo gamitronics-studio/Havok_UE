@@ -114,7 +114,15 @@ struct HK_CarSetup
 
     float Up = -0.05f, Front = 1.3f, Back = 1.1f, Lateral = 1.1f;
 
-    bool RayTraceOrCollision;
+    bool RTWheels;
+    bool UseCustomWheel;
+    float BodyScale;
+
+    float HK_normalSpinDamping;
+    float HK_collisionSpinDamping;
+    float HK_collisionThreshold;
+
+    bool HK_bCustomCar;
 };
 
 struct HK_CarStats
@@ -138,7 +146,7 @@ private:
 public:
     HK_Car();
     void HK_BuildCarMesh(const float[], const float[], const float[], int, const int[], int);
-    int HK_BuildCar(HK_CarSetup, const float X[], const float Y[], const float Z[], int VertCount, const int Triangles[], int TriCount);
+    void HK_BuildCar(HK_CarSetup, const float X[], const float Y[], const float Z[], int VertCount, const int Triangles[], int TriCount, const float WX[], const float WY[], const float WZ[], int WVertCount, const int WTriangles[], int WTriCount);
     HK_Location HK_GetCarLocation();
     HK_Quaternion HK_GetCarRotation();
     float HK_GetCarAngle();
@@ -149,4 +157,8 @@ public:
     void HK_ResetCar();
 
     bool bCustomCar;
+
+    void UpdateCar(HK_CarSetup CarData);
+
+    HK_CarSetup HK_GetCarSetup();
 };

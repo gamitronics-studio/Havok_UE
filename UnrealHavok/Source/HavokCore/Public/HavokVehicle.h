@@ -99,6 +99,39 @@ struct FCarSetup
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     bool bUseRayTrace;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float bBodyScale;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float NormalSpinDamping = 0.0f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float CollisionSpinDamping = 4.0f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float CollisionThreshold = 1.0f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    bool bUseCustomWheel;
+
+};
+
+USTRUCT(BlueprintType)
+struct FMeshData
+{
+    GENERATED_BODY()
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+     TArray<float> X;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+     TArray<float> Y;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+     TArray<float> Z;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+     TArray<int> Triangles;
 };
 
 UCLASS(BlueprintType)
@@ -115,7 +148,7 @@ public:
     //void BuildCarMesh(const TArray<float>& X, const TArray<float>& Y, const TArray<float>& Z, const TArray<int>& Triangles);
 
     UFUNCTION(BlueprintCallable)
-    int SpawnCar(FCarSetup SetupData, const TArray<float>& X, const TArray<float>& Y, const TArray<float>& Z, const TArray<int>& Triangles);
+    void SpawnCar(FCarSetup SetupData, const TArray<float>& X, const TArray<float>& Y, const TArray<float>& Z, const TArray<int>& Triangles, FMeshData WheelMesh);
 
     UFUNCTION(BlueprintCallable)
     FVector GetCarLoc();
@@ -135,8 +168,14 @@ public:
     UFUNCTION(BlueprintCallable)
     void ResetCar();
 
+    UFUNCTION(BlueprintCallable)
+    void UpdateCar(FCarSetup SetupData);
+
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     bool bUseCustomCar;
+
+    UFUNCTION(BlueprintCallable)
+    FCarSetup GetCatSetup();
 
 private:
     class HK_Car* Car;
