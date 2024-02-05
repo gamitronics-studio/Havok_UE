@@ -12,8 +12,13 @@ Saved
 *.suo
 *.xcodeproj
 *.xcworkspace
-HavokCore/HavokCore/x64
-UnrealHavok/Content/Wild_Wheels
+
 *tlog
+
+HavokCore/HavokCore/x64
+HavokCore/HavokCore/Havok/Lib
+HavokCore/HavokCore/Havok/Source
+HavokCore/x64
+
 !UnrealHavok/Binaries/Win64/HavokCore.dll
 !UnrealHavok/Source/HavokCore/ThirdParty/HavokCore.lib

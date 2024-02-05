@@ -32,6 +32,8 @@ public:
 
     virtual void buildVehicle(const hknpWorld* world, hknpVehicleInstance& vehicle, const hkRotation& chassisOrientation, bool useRaycast, bool initVehicle = true);
 
+    void UpdateCar(const hknpWorld* world, hknpVehicleInstance& vehicle);
+
 public:
     virtual void setupVehicleData(const hknpWorld* world, const hkRotation& chassisOrientation, hknpVehicleData& data);
     virtual void setupComponent(const hknpVehicleData& data, hknpVehicleDefaultAnalogDriverInput& driverInput);
@@ -50,7 +52,7 @@ public:
     virtual hkReal getMass() { return 750.0f; }
 };
 
-hkRefPtr<hknpShape> HK_CALL makeCarChassisShape(const hkVector4& fwd = { 1, 0, 0 }, const hkVector4& up = { 0, 1, 0 }, const hkVector4& right = { 0, 0, 1 });
+hkRefPtr<hknpShape> HK_CALL makeCarChassisShape(float scale = 1.0f, const hkVector4& fwd = { 1, 0, 0 }, const hkVector4& up = { 0, 1, 0 }, const hkVector4& right = { 0, 0, 1 });
 
 struct DisplayMeterInfo
 {
@@ -76,6 +78,8 @@ struct VehicleDataAndDisplayInfo
 void HK_CALL createDisplayWheel(hkArray<hkRefPtr<hkDisplayGeometry>>& displayGeometry, const hkVector4& fwd, const hkVector4& right, hkReal radius, hkReal thickness);
 
 void HK_CALL createDisplayWheels(hkUint64 displayId, hkReal radius = 0.4f, hkReal thickness = 0.2f, const hkVector4& fwd = hkVector4(1, 0, 0), const hkVector4& right = hkVector4(0, 0, 1));
+
+void HK_CALL createCustomWheels(const float X[], const float Y[], const float Z[], int VertCount, const int Triangles[], int TriCount);
 
 hkRefPtr<hknpShape> HK_CALL makeDisc(const hkVector4& fwd, const hkVector4& right, hkReal radius, hkReal thickness, int numSides);
 

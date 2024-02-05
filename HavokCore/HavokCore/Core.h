@@ -19,9 +19,12 @@ struct Gravity
 
 struct HK_Location
 {
-    float x;
-    float y;
-    float z;
+    float x = 0.0f;
+    float y = 0.0f;
+    float z = 0.0f;
+
+    HK_Location() : x(0.0f), y(0.0f), z(0.0f) {}
+    HK_Location(float X, float Y, float Z) : x(X), y(Y), z(Z) {}
 };
 
 struct HK_Quaternion

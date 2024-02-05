@@ -48,11 +48,12 @@ void HK_Car::HK_BuildCarMesh(const float X[], const float Y[], const float Z[], 
     BodyShape = boxShape;
 }
 
-int HK_Car::HK_BuildCar(HK_CarSetup SetupData, const float X[], const float Y[], const float Z[], int VertCount, const int Triangles[], int TriCount)
+void HK_Car::HK_BuildCar(HK_CarSetup SetupData)
 {
     m_npWorld = GetWorld();
 
     CarData = SetupData;
+
 
     //____ Car Body____//    
     {
@@ -61,6 +62,8 @@ int HK_Car::HK_BuildCar(HK_CarSetup SetupData, const float X[], const float Y[],
             hknpMaterial chassisMaterial;
             {
                 chassisMaterial.m_dynamicFriction = 0.5f;
+                chassisMaterial.m_dynamicFriction = 0.8f;
+                chassisMaterial.m_staticFriction = 0.8f;
                 chassisMaterial.m_restitution = 0.25f;
             }
 
@@ -69,52 +72,49 @@ int HK_Car::HK_BuildCar(HK_CarSetup SetupData, const float X[], const float Y[],
 
         hknpBodyCinfo chassisBodyInfo;
         {
-            chassisBodyInfo.m_position = hkVector4(SetupData.SpawnLocation.x, SetupData.SpawnLocation.y, SetupData.SpawnLocation.z);
+            chassisBodyInfo.m_position = hkVector4(CarData.SpawnLocation.x, CarData.SpawnLocation.y, CarData.SpawnLocation.z);
 
             hkGeometry geometry;
             geometry.clear();
 
-            for (int i = 0; i < VertCount; i++)
-                geometry.m_vertices.expandOne().set(X[i], Y[i], Z[i]);
+            //for (int i = 0; i < VertCount; i++)
+            //    geometry.m_vertices.expandOne().set(X[i], Y[i], Z[i]);
 
-            for (int i = 0; i < TriCount; i += 3)
-                geometry.m_triangles.expandOne().set(Triangles[i], Triangles[i + 1], Triangles[i + 2]);
+           // for (int i = 0; i < TriCount; i += 3)
+            //    geometry.m_triangles.expandOne().set(Triangles[i], Triangles[i + 1], Triangles[i + 2]);
 
-            hkVector4 halfExtents(1, 1, 1);
-            hkRefPtr<hknpShape> boxShape = hknpShape::makeBoxFromHalfExtents(halfExtents);
-
-            chassisBodyInfo.m_shape = bCustomCar ? hknpShape::makeMesh(geometry): makeCarChassisShape();
+         
+            chassisBodyInfo.m_shape = CarData.HK_bCustomCarBody ? hknpShape::makeMesh(geometry) : makeCarChassisShape();
             chassisBodyInfo.m_materialId = chassisMaterialId;
-            chassisBodyInfo.m_mass = SetupData.HK_Mass;
+            chassisBodyInfo.m_mass = CarData.HK_Mass;
             chassisBodyInfo.m_motionType = hknpMotionType::DYNAMIC;
         }
-         BodyID = new hknpBodyId();
+        BodyID = new hknpBodyId();
         *BodyID = AddBody(chassisBodyInfo);
         m_npWorld->setBodyActivationControl(*BodyID, hknpActivationControl::ALWAYS_ACTIVE);
     }
- 
+
 
     //____ Car Create____//
     {
         m_vehicle = new hknpVehicleInstance(*BodyID, m_npWorld);
         NpVehicleSetup setup;
 
-        setup.SetupData = SetupData;
+        setup.SetupData = CarData;
 
         hkRotation rot;
         rot.setCols(hkVector4(0, 1, 0), hkVector4(1, 0, 0), hkVector4(0, 0, 1));
 
-        const bool useRayCast = true;
-        setup.buildVehicle(m_npWorld, *m_vehicle, rot, useRayCast);
+        setup.buildVehicle(m_npWorld, *m_vehicle, rot, CarData.HK_RTWheels);
 
         m_npWorld->getActionManager()->addAction(m_vehicle);
         m_vehicle->removeReference();
     }
 
     //____Wheels____//
-    hkReal radius = SetupData.HK_WheelRadius;
-    hkReal thickness = SetupData.HK_WheelThickness;
-    { 
+    hkReal radius = CarData.HK_WheelRadius;
+    hkReal thickness = CarData.HK_WheelThickness;
+    {
         m_displayWheelId.setSize(4);
 
         for (int i = 0; i < m_displayWheelId.getSize(); i++)
@@ -124,9 +124,9 @@ int HK_Car::HK_BuildCar(HK_CarSetup SetupData, const float X[], const float Y[],
 
             //____Wheel____//
             hkInplaceArray<hkRefPtr<hkDisplayGeometry>, 1> displayGeometry;
-                        
-            createDisplayWheels(displayId, params.m_radius, params.m_width, hkVector4(1,0,0), hkVector4(0,0,1));
-            
+
+            createDisplayWheels(displayId, params.m_radius, params.m_width, hkVector4(1, 0, 0), hkVector4(0, 0, 1));
+
             hkInplaceArray<hkDisplayGeometry*, 1> geomsAsPointers;
             for (const hkRefPtr<hkDisplayGeometry>& dg : displayGeometry)
             {
@@ -141,8 +141,6 @@ int HK_Car::HK_BuildCar(HK_CarSetup SetupData, const float X[], const float Y[],
     //____ Car Add to World ____//
     hkVector4 m_vehiclePosition = hkVector4(CarData.SpawnLocation.x, CarData.SpawnLocation.y, CarData.SpawnLocation.z);
     m_npWorld->setBodyPosition(*BodyID, m_vehiclePosition);
-
-    return 200;
 }
 
 hknpVehicleDriverInputAnalogStatus* deviceStatus;
@@ -168,6 +166,19 @@ void HK_Car::HK_ResetCar()
     //ActivationMode mode = 
     //m_npWorld->setBodyTransform(*BodyID, ResetLoc, ResetRot, ActivationMode::ACTIVATE);
     GetWorld()->setBodyTransform(*BodyID, Reset);
+}
+
+void HK_Car::UpdateCar(HK_CarSetup UpdateData)
+{  
+    NpVehicleSetup Update;
+    Update.SetupData = UpdateData;
+    CarData = UpdateData;
+    Update.UpdateCar(m_npWorld, *m_vehicle);
+}
+
+HK_CarSetup HK_Car::HK_GetCarSetup()
+{
+    return CarData;
 }
 
 HK_Location HK_Car::HK_GetCarLocation()
@@ -210,7 +221,7 @@ HK_CarStats HK_Car::HK_GetCarStats()
     stats.Gear = m_vehicle->m_currentGear;
     stats.isReverse = m_vehicle->m_isReversing;
     stats.Torque = m_vehicle->m_torque;
-    //stats.SteerAngle = m_vehicle->m_wheelsSteeringAngle;
+    stats.SteerAngle = m_vehicle->m_mainSteeringAngle;
 
     return stats;
 }

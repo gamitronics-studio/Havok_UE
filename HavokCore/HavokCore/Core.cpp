@@ -59,7 +59,7 @@ HardwareData HardwareInfo()
     return HardData;
 }
 
-#pragma region WorlControls
+#pragma region WorldControls
 
 #define msize _msize
 
@@ -85,14 +85,11 @@ struct WorkerThread
 public:
     HK_DECLARE_CLASS(WorkerThread, New);
 
-    WorkerThread(hkTaskQueue* taskQueue)
-        : m_taskQueue(taskQueue)
+    WorkerThread(hkTaskQueue* taskQueue) : m_taskQueue(taskQueue)
     {
         m_thread = hkThread::make([this]
             {
-
                 m_monitorStream.store(hkMonitorStream::getInstancePtr(), hk::memory_order_relaxed);
-
 
                 while (1)
                 {
@@ -131,7 +128,6 @@ public:
         m_handleToWaitFor = finalHandle;
         m_workAvailable.release();
     }
-
 
     void waitUntilFinished()
     {
@@ -304,6 +300,7 @@ void QuitPhysics()
 //____Floor____//
 void HK_AddFloor(float X, float Z)
 {
+
     hkVector4 halfExtents(X, 0.5f, Z);
     hkRefPtr<hknpShape> boxShape = hknpShape::makeBoxFromHalfExtents(halfExtents);
 
@@ -312,6 +309,7 @@ void HK_AddFloor(float X, float Z)
 
     hknpBodyId bodyId = world->allocateBody(bodyCinfo);
     world->addBody(bodyId);
+
 }
 
 void HK_AddBlock(float X, float Y, float Z, HK_Location loc, HK_Quaternion quat)
@@ -409,7 +407,7 @@ hknpMaterialId GetMaterial(hknpMaterial Material)
 
 HK_Location GetBodyLocation(hknpBodyId BodyID)
 {
-    HK_Location Loc;
+    HK_Location Loc = HK_Location(0.0f, 0.0f, 0.0f);;
     hkVector4 pos = world->getBodyTransform(BodyID).getTranslation();
 
     Loc.x = pos(0);
